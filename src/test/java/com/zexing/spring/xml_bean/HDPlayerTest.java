@@ -16,6 +16,7 @@ import static org.junit.Assert.assertNotNull;
 @RunWith(JUnit4.class)
 //@RunWith(SpringJUnit4ClassRunner.class)
 // 这个注解会在测试开始的时候自动创建Spring的应用上下文，在用了这个注解的情况下，会与ClassPathXmlApplicationContext有冲突，得用@ContextConfiguration加载xml文件，
+//参考链接：https://blog.csdn.net/weixin_40672761/article/details/83859084
 //@ContextConfiguration(locations="classpath:/constructor-context.xml")
 public class HDPlayerTest {
 
