@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd">
+    <bean id = "compactDisc" class="com.zexing.spring.auto_bean.SgtPeppers" />
+    <bean id="cDPlayer" class="com.zexing.spring.auto_bean.CDPlayer">
+        <constructor-arg ref="compactDisc"/>
+    </bean>
+
+    <bean id="blankDisc" class="com.zexing.spring.xml_bean.BlankDisc">
+        <constructor-arg index="0" value="gentle music"/>
+        <constructor-arg index="1" value="Jason"/>
+    </bean>
+
+    <bean id="hdPlayer" class="com.zexing.spring.xml_bean.HDPlayer">
+        <property name="compactDisc" ref="compactDisc"/>
+    </bean>
+
+</beans>
