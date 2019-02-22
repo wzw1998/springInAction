@@ -22,12 +22,12 @@ public class DataSourceConfigTest {
 
         @Test
         public void shouldBeEmbeddedDatasource() {
-            assertNotNull(dataSource);
+            assertNull(dataSource);
         }
     }
 
     @RunWith(SpringJUnit4ClassRunner.class)
-    @ContextConfiguration("classpath:datasource-config.xml")
+    @ContextConfiguration("classpath:/com/zexing/profiles/datasource-config.xml")
     @ActiveProfiles("development")
     public static class DevelopmentDataSourceTest_XMLConfig {
         @Autowired
@@ -40,7 +40,7 @@ public class DataSourceConfigTest {
     }
 
     @RunWith(SpringJUnit4ClassRunner.class)
-    @ContextConfiguration("classpath:datasource-config.xml")
+    @ContextConfiguration("classpath:/com/zexing/profiles/datasource-config.xml")
     @ActiveProfiles("production")
     public static class ProductionDataSourceTest_XMLConfig {
         @Autowired
