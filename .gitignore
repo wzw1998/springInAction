@@ -7,3 +7,7 @@
 *.iml
 out
 gen
+/Chapter_01_02/target/
+/Chapter_03/target/
+/Chapter_04/target/
+/target/

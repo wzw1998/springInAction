@@ -10,22 +10,26 @@ public class Audience {
     public void performance(){
     }
 
-    @Before("performance()")//表演之前手机静音
+//    @Before("execution(* com.zexing.aspectj.Performance.perform(..))")//表演之前手机静音
+    @Before("performance()")
     public void silenceCellPhones(){
         System.out.println("silencing cell phones");
     }
 
-    @Before("performance()")//表演之前坐好位置
+//    @Before("execution(* com.zexing.aspectj.Performance.perform(..))")//表演之前坐好位置
+    @Before("performance()")
     public void takeSeats(){
         System.out.println("Taking seats");
     }
 
-    @AfterReturning("performance()")//表演成功后鼓掌呐喊
+//    @AfterReturning("execution(* com.zexing.aspectj.Performance.perform(..))")//表演成功后鼓掌呐喊
+    @Before("performance()")
     public void applause(){
         System.out.println("CLAP CLAP CLAP！");
     }
 
-    @AfterThrowing("performance()")//表演失败后要求退款
+//    @AfterThrowing("execution(* com.zexing.aspectj.Performance.perform(..))")//表演失败后要求退款
+    @Before("performance()")
     public void demandRefun(){
         System.out.println("Demanding a refun");
     }
