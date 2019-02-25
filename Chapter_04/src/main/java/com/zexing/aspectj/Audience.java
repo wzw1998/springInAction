@@ -23,13 +23,13 @@ public class Audience {
     }
 
 //    @AfterReturning("execution(* com.zexing.aspectj.Performance.perform(..))")//表演成功后鼓掌呐喊
-    @Before("performance()")
+    @AfterReturning("performance()")
     public void applause(){
         System.out.println("CLAP CLAP CLAP！");
     }
 
 //    @AfterThrowing("execution(* com.zexing.aspectj.Performance.perform(..))")//表演失败后要求退款
-    @Before("performance()")
+    @AfterThrowing("performance()")
     public void demandRefun(){
         System.out.println("Demanding a refun");
     }
