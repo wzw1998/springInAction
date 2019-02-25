@@ -1,4 +1,4 @@
-package com.zexing.aspectj;
+package com.zexing.aspectj.concert;
 
 public interface Performance {
     public void perform();

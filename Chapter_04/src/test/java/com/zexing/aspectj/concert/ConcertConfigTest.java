@@ -1,5 +1,7 @@
-package com.zexing.aspectj;
+package com.zexing.aspectj.concert;
 
+import com.zexing.aspectj.concert.ConcertConfig;
+import com.zexing.aspectj.concert.Performance;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,19 +15,14 @@ import static org.junit.Assert.*;
 //@ContextConfiguration(locations = "classpath*:app.xml")
 public class ConcertConfigTest {
 
-//    @Autowired
-//    private Audience audience;
-
     @Autowired
     private Performance concert;
 
     @Test
     public void concertStart(){
 
-//        assertNotNull(audience);
         assertNotNull(concert);
         concert.perform();
     }
-
 
 }

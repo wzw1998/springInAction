@@ -1,4 +1,4 @@
-package com.zexing.aspectj;
+package com.zexing.aspectj.concert;
 
 import org.springframework.stereotype.Component;
 

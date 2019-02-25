@@ -8,7 +8,7 @@
     <context:component-scan base-package="com.zexing.aspectj" />
 
     <aop:aspectj-autoproxy />
-
+<!--
     <bean id="audience" class="com.zexing.aspectj.Audience" />
-
+-->
 </beans>
