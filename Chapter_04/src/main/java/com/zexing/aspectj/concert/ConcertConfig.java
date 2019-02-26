@@ -7,7 +7,7 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
 @Configuration
 @EnableAspectJAutoProxy     //启用自动代理
-@ComponentScan
+@ComponentScan(basePackages = "com.zexing")
 public class ConcertConfig {
 
 }
