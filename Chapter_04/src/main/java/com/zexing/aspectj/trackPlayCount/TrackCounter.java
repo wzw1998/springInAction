@@ -21,12 +21,12 @@ public class TrackCounter {
     // execution(...play(int))的 int 是被通知的方法的获得的参数的类型
     // 通过 && args(trackNumber) 表示被通知方法的实参也将传递给通知方法
     @Pointcut("execution(* com.zexing.aspectj.trackPlayCount.CDPlayer.play(int)) && args(trackNumber)")
-    public void pointcut(int trackNumber) { // 形参名必须和 args()一致
+    public void trackPlayed(int trackNumber) { // 形参名必须和 args()一致
     }
 
-    // @Around("pointcut(trackNumber)")中的 "trackNumber"
+    // @Around("trackPlayed(trackNumber)")中的 "trackNumber"
     // 不必与 args() 相同 ，可以另外命名的，但必须保证本通知内一致即可。
-    @Around("pointcut(trackNumber)")
+    @Around("trackPlayed(trackNumber)")
     public void countTrack(ProceedingJoinPoint pjp, int trackNumber) {
         try {
             pjp.proceed(); //调用被通知方法
