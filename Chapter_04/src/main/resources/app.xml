@@ -4,11 +4,91 @@
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:aop="http://www.springframework.org/schema/aop"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
-
+    <!-- 开启组件扫描-->
     <context:component-scan base-package="com.zexing.aspectj" />
 
+    <!-- 开启自动代理-->
     <aop:aspectj-autoproxy />
-<!--
-    <bean id="audience" class="com.zexing.aspectj.Audience" />
--->
+
+
+    <bean id="audiance" class="com.zexing.aspectj.concert.Audience" />
+    <bean id = "concert" class="com.zexing.aspectj.concert.Concert" />
+
+    <!--声明切面 -->
+    <aop:config>
+        <aop:aspect ref="audience">       <!--引用audience Bean-->
+
+            <aop:before pointcut="execution(* com.zexing.aspectj.concert.Performance.perform(..))" method="silenceCellPhones"/>
+
+            <aop:before pointcut="execution(* com.zexing.aspectj.concert.Performance.perform(..))" method="takeSeats"/>
+
+            <aop:after-returning pointcut="execution(* com.zexing.aspectj.concert.Performance.perform(..))" method="applause"/>
+
+            <aop:after-throwing pointcut="execution(* com.zexing.aspectj.concert.Performance.perform(..))" method="demandRefun"/>
+
+        </aop:aspect>
+    </aop:config>
+
+    <!--声明切点 -->
+    <aop:config>
+        <aop:aspect ref="audience">
+            <aop:pointcut id="performance" expression="execution(* com.zexing.aspectj.concert.Performance.perform(..))" />
+
+            <aop:before pointcut-ref="performance" method="silenceCellPhones"/>
+
+            <aop:before pointcut-ref="performance" method="takeSeats"/>
+
+            <aop:after-returning pointcut-ref="performance" method="applause"/>
+
+            <aop:after-throwing pointcut-ref="performance" method="demandRefun"/>
+
+        </aop:aspect>
+    </aop:config>
+
+    <!-- 声明环绕通知-->
+    <aop:config>
+        <aop:aspect ref="audience">       <!--引用audience Bean-->
+            <aop:pointcut id="performance" expression="execution(* com.zexing.aspectj.concert.Performance.perform(..))"  />
+
+            <aop:around pointcut-ref="performance" method="watchPerformance"/>
+
+        </aop:aspect>
+    </aop:config>
+
+    <!-- 为通知传递参数-->
+    <bean id="player" class="com.zexing.aspectj.trackPlayCount.CDPlayer" />
+    <!-- 构造器注入属性-->
+    <bean id="cd" class="com.zexing.aspectj.trackPlayCount.CompactDisc" >
+        <constructor-arg name="title" value="唐朝" />
+        <constructor-arg name="tracks">
+            <list>
+                <value>梦回唐朝</value>
+                <value>太阳</value>
+                <value>九拍</value>
+            </list>
+        </constructor-arg>
+
+    </bean>
+    <bean id="trackCounter" class="com.zexing.aspectj.trackPlayCount.TrackCounter" />
+
+    <aop:config>
+        <aop:aspect ref="trackCounter">
+            <aop:pointcut id="trackPlayed" expression="execution(* com.zexing.aspectj.trackPlayCount.CDPlayer.play(int)) and args(trackNumber)" />
+            <!-- 这里args()的trackNumber 必须与类中countTrack()方法的参数名保持一致-->
+            <aop:around pointcut-ref="trackPlayed" method="countTrack" />
+        </aop:aspect>
+    </aop:config>
+
+    <!-- 为bean 新增方法-->
+    <bean id="onePerformer" class="com.zexing.aspectj.concert2.OnePerformer" />
+
+    <aop:config>
+        <aop:aspect ref="audience">       <!--引用audience Bean-->
+            <aop:declare-parents types-matching="com.zexing.aspectj.concert.Performance"
+                                 implement-interface="com.zexing.aspectj.concert2.Performer"
+                                 delegate-ref="onePerformer" />
+        </aop:aspect>
+    </aop:config>
+
+
 </beans>
