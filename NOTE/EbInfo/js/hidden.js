@@ -5,13 +5,14 @@
 
 function fun(obj){
     var tb = document.getElementById("EbInfoTable");
-    var wshNetwork = new ActiveXObject("WScript.Network");
-
+    // var wshNetwork = new ActiveXObject("WScript.Network");
     if (wshNetwork.UserName === "ASNPHTL") {
-        tb.setAttribute("hidden","hidden");
-        obj.value = "显示";
-    }else {
-        tb.removeAttribute("hidden");
-        obj.value = "隐藏";
+        if (obj.value ==="显示") {
+            tb.setAttribute("hidden","hidden");
+            obj.value = "显示";
+        }else {
+            tb.removeAttribute("hidden");
+            obj.value = "隐藏";
+        }
     }
 }
