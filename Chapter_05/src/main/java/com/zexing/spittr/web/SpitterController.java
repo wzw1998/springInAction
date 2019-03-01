@@ -1,7 +1,7 @@
 package com.zexing.spittr.web;
 
 import com.zexing.spittr.bean.Spitter;
-import com.zexing.spittr.repository.SpittlerRepository;
+import com.zexing.spittr.repository.SpitterRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,11 +19,11 @@ public class SpitterController {
      *
      * Created by Joson on 2/28/2019.
      */
-    private SpittlerRepository spittlerRepository;
+    private SpitterRepository spitterRepository;
 
     @Autowired
-    public SpitterController(SpittlerRepository spittlerRepository){
-        this.spittlerRepository = spittlerRepository;
+    public SpitterController(SpitterRepository spitterRepository){
+        this.spitterRepository = spitterRepository;
     }
 
     @RequestMapping(value = "/register",method = RequestMethod.GET)
@@ -36,14 +36,14 @@ public class SpitterController {
         if (errors.hasErrors()) {
             return "registerForm";
         }
-        spittlerRepository.save(spitter);
+        spitterRepository.save(spitter);
         return "redirect:/spitter/"+ spitter.getUsername();
     }
 
 
     @RequestMapping(value = "/profile/{userName}")
     public String showSpitterProfile(@PathVariable String userName, Model model){   //这里展现user的信息，需要模型数据传递给视图
-        model.addAttribute(spittlerRepository.findSpittlerByUserName(userName));
+        model.addAttribute(spitterRepository.findSpitterByUserName(userName));
         return "profile";
     }
 

@@ -1,7 +1,7 @@
 package com.zexing.spittr.web;
 
 import com.zexing.spittr.bean.Spitter;
-import com.zexing.spittr.repository.SpittlerRepository;
+import com.zexing.spittr.repository.SpitterRepository;
 import org.junit.Test;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -16,9 +16,9 @@ public class SpitterControllerTest {
     @Test
     public void showRegistrationForm() throws Exception {
 
-        SpittlerRepository mockSpittlerRepository = mock(SpittlerRepository.class);
+        SpitterRepository mockSpitterRepository = mock(SpitterRepository.class);
 
-        SpitterController spitterController = new SpitterController(mockSpittlerRepository);
+        SpitterController spitterController = new SpitterController(mockSpitterRepository);
 
         MockMvc mockMvc = MockMvcBuilders.standaloneSetup(spitterController).build();
 
@@ -32,10 +32,10 @@ public class SpitterControllerTest {
         Spitter unSavedSpitter = new Spitter("Joson","12345","zhang","jacoo","12345@168.com");
         Spitter savedSpitter = new Spitter(10L,"Joson","12345","zhang","jacoo","12345@168.com");
 
-        SpittlerRepository mockSpittlerRepository = mock(SpittlerRepository.class);
-        when(mockSpittlerRepository.save(unSavedSpitter)).thenReturn(savedSpitter);
+        SpitterRepository mockSpitterRepository = mock(SpitterRepository.class);
+        when(mockSpitterRepository.save(unSavedSpitter)).thenReturn(savedSpitter);
 
-        SpitterController spitterController = new SpitterController(mockSpittlerRepository);
+        SpitterController spitterController = new SpitterController(mockSpitterRepository);
 
         MockMvc mockMvc = MockMvcBuilders.standaloneSetup(spitterController).build();
         mockMvc.perform(MockMvcRequestBuilders.post("/spittler/register")
@@ -52,10 +52,10 @@ public class SpitterControllerTest {
     public void showSpitterProfile() throws Exception {
         Spitter savedSpitter = new Spitter(10L,"Joson","12345","zhang","jacoo","12345@168.com");
 
-        SpittlerRepository mockSpittlerRepository = mock(SpittlerRepository.class);
-        when(mockSpittlerRepository.findSpittlerByUserName(savedSpitter.getUsername())).thenReturn(savedSpitter);
+        SpitterRepository mockSpitterRepository = mock(SpitterRepository.class);
+        when(mockSpitterRepository.findSpitterByUserName(savedSpitter.getUsername())).thenReturn(savedSpitter);
 
-        SpitterController spitterController = new SpitterController(mockSpittlerRepository);
+        SpitterController spitterController = new SpitterController(mockSpitterRepository);
 
         MockMvc mockMvc = MockMvcBuilders.standaloneSetup(spitterController).build();
         mockMvc.perform(MockMvcRequestBuilders.get("/spittler/profile/Joson"))

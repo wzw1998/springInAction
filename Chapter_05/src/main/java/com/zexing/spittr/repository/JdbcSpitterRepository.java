@@ -4,7 +4,7 @@ import com.zexing.spittr.bean.Spitter;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class JdbcSpittlerRepository implements SpittlerRepository {
+public class JdbcSpitterRepository implements SpitterRepository {
 
     /**
      *
@@ -16,7 +16,7 @@ public class JdbcSpittlerRepository implements SpittlerRepository {
     }
 
     @Override
-    public Spitter findSpittlerByUserName(String userName) {
+    public Spitter findSpitterByUserName(String userName) {
         return null;
     }
 }
