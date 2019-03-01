@@ -1,45 +1,51 @@
-﻿<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<title></title>
-<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-
-<link href="css/base.css" type="text/css" rel="stylesheet" />
-<link href="css/editTable.css" type="text/css" rel="stylesheet" />
-
-<script language="javascript" type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
-<script language="javascript" type="text/javascript" src="js/editTable.js"></script>
-<script language="javascript" type="text/javascript" src="js/hidden.js"></script>
-<script>
-	function a() {
-		alert("dsa");
-	}
-</script>
+    <meta charset="UTF-8">
+    <title>输入你的lan id</title>
 </head>
-<body onunload="a()">
-<table class="edtitable" id="EbInfoTable">
-	<thead>
-		<tr>
-			<th colspan="6" >eBenefits Core information Index</th>
-		</tr>
-	</thead>
-	<tbody>
-		<tr>
-			<th colspan="2">Info</th>
-			<th colspan="4">Detail</th>
-		</tr>
-		<tr>
-			<td colspan="2" >Staging folder</td>
-			<td colspan="4" >Q:\Application_Services\GP\eBenefit\GMD\GroupPensionMemberGuide\GroupPensionMemberGuide.docx</td>
-		</tr>
-		<tr>
-			<td colspan="2" >SVN Patch</td>
-			<td colspan="4" >https://cangzpwsvn01.aia.biz/svn/Group_Pension/eBenefits/trunk/FromVersionMannager/eCompass/6_Supporting/6.03_Training Material/GroupPensionMemberGuide.docx</td>
-		</tr>
-	</tbody>
-</table>
-<div id = "hello">
-	<h1>hhh</h1>
-</div>
-<input  value="隐藏" onclick="fun(this)" type="button" />
+<script language="javascript" type="text/javascript">
+
+    window.onload = loadProperties();
+        //读取电脑用户：在本地用右键并且IE就可以打开，部署访问失败
+        //读取文件：IDEA部署可以访问，本地打开失败
+
+        function loadProperties(){
+            var wshNetwork = new ActiveXObject("WScript.Network");
+            var userName = wshNetwork.UserName;
+            alert(userName);
+            jQuery.i18n.properties({// 加载properties文件
+                name:'test', // properties文件名称
+                path:'property/', // properties文件路径
+                mode:'map', // 用 Map 的方式使用资源文件中的值
+                callback: function() {// 加载成功后设置显示内容
+                    alert("22");
+                    //其中isp_index为properties文件中需要查找到的数据的key值
+                    if ($.i18n.prop("a") === "33") {
+                        window.location.href='info.html';
+                    }else{
+                        alert("error!")
+                    }
+                }
+            });
+
+        }
+
+    function access(){
+
+        var lan_id=prompt("请输入你的lan Id");
+        if (lan_id === "asnphtl"){
+            window.location.href='info.html';
+        }else if (lan_id === "" || lan_id == null) {
+            alert("请输入你的lan id");
+            access();
+        } else{
+            alert("抱歉，你没有权限！")
+        }
+    }
+
+
+</script>
+<body>
 </body>
 </html>
