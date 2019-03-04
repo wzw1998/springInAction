@@ -6,35 +6,35 @@
 </head>
 <script language="javascript" type="text/javascript">
 
-    window.onload = loadProperties();
+    window.onload = access();
         //读取电脑用户：在本地用右键并且IE就可以打开，部署访问失败
         //读取文件：IDEA部署可以访问，本地打开失败
 
-        function loadProperties(){
-            var wshNetwork = new ActiveXObject("WScript.Network");
-            var userName = wshNetwork.UserName;
-            alert(userName);
-            jQuery.i18n.properties({// 加载properties文件
-                name:'test', // properties文件名称
-                path:'property/', // properties文件路径
-                mode:'map', // 用 Map 的方式使用资源文件中的值
-                callback: function() {// 加载成功后设置显示内容
-                    alert("22");
-                    //其中isp_index为properties文件中需要查找到的数据的key值
-                    if ($.i18n.prop("a") === "33") {
-                        window.location.href='info.html';
-                    }else{
-                        alert("error!")
-                    }
-                }
-            });
-
-        }
+        // function loadProperties(){
+        //     var wshNetwork = new ActiveXObject("WScript.Network");
+        //     var userName = wshNetwork.UserName;
+        //     alert(userName);
+        //     jQuery.i18n.properties({// 加载properties文件
+        //         name:'test', // properties文件名称
+        //         path:'property/', // properties文件路径
+        //         mode:'map', // 用 Map 的方式使用资源文件中的值
+        //         callback: function() {// 加载成功后设置显示内容
+        //             alert("22");
+        //             //其中isp_index为properties文件中需要查找到的数据的key值
+        //             if ($.i18n.prop("a") === "33") {
+        //                 window.location.href='info.html';
+        //             }else{
+        //                 alert("error!")
+        //             }
+        //         }
+        //     });
+        //
+        // }
 
     function access(){
 
         var lan_id=prompt("请输入你的lan Id");
-        if (lan_id === "asnphtl"){
+        if (lan_id === "bsnpb9g"){
             window.location.href='info.html';
         }else if (lan_id === "" || lan_id == null) {
             alert("请输入你的lan id");
