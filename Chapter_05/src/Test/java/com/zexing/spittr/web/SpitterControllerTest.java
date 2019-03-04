@@ -22,7 +22,7 @@ public class SpitterControllerTest {
 
         MockMvc mockMvc = MockMvcBuilders.standaloneSetup(spitterController).build();
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/spittler/register"))
+        mockMvc.perform(MockMvcRequestBuilders.get("/spitter/register"))
                 .andExpect(MockMvcResultMatchers.view().name("registerForm"));
     }
 
@@ -38,13 +38,13 @@ public class SpitterControllerTest {
         SpitterController spitterController = new SpitterController(mockSpitterRepository);
 
         MockMvc mockMvc = MockMvcBuilders.standaloneSetup(spitterController).build();
-        mockMvc.perform(MockMvcRequestBuilders.post("/spittler/register")
+        mockMvc.perform(MockMvcRequestBuilders.post("/spitter/register")
                 .param("username","Joson")
                 .param("password","12345")
                 .param("firstName","zhang")
                 .param("lastName","jacoo")
                 .param("email","12345@168.com"))
-                .andExpect(MockMvcResultMatchers.redirectedUrl("/spittler/Joson"));
+                .andExpect(MockMvcResultMatchers.redirectedUrl("/spitter/Joson"));
 
     }
 
@@ -58,7 +58,7 @@ public class SpitterControllerTest {
         SpitterController spitterController = new SpitterController(mockSpitterRepository);
 
         MockMvc mockMvc = MockMvcBuilders.standaloneSetup(spitterController).build();
-        mockMvc.perform(MockMvcRequestBuilders.get("/spittler/profile/Joson"))
+        mockMvc.perform(MockMvcRequestBuilders.get("/spitter/profile/Joson"))
                 .andExpect(MockMvcResultMatchers.view().name("profile"))
                 .andExpect(MockMvcResultMatchers.model().attributeExists("spitter"));
     }

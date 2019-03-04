@@ -309,6 +309,195 @@ public class SpittleControllerTest{
         }
 }
 ```
+## 处理表单
+### 获取表单
+SpillerController.java
+```java
+
+@Controller
+@RequestMapping("/spitter")
+public class SpitterController {
+    /**
+     *
+     * Created by Joson on 2/28/2019.
+     */
+    private SpitterRepository spitterRepository;
+
+    @Autowired
+    public SpitterController(SpitterRepository spitterRepository){
+        this.spitterRepository = spitterRepository;
+    }
+
+    @RequestMapping(value = "/register",method = RequestMethod.GET)
+    public String showRegistrationForm(){
+        return "registerForm";
+    }
+}
+```
+SpitterControllerTest.java
+```java
+public class SpitterControllerTest {
+
+
+    @Test
+    public void showRegistrationForm() throws Exception {
+
+        SpitterRepository mockSpitterRepository = mock(SpitterRepository.class);
+
+        SpitterController spitterController = new SpitterController(mockSpitterRepository);
+
+        MockMvc mockMvc = MockMvcBuilders.standaloneSetup(spitterController).build();
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/spittler/register"))
+                .andExpect(MockMvcResultMatchers.view().name("registerForm"));
+    }
+}
+```
+### 处理提交的表单
+SpillerController.java
+
+```
+@RequestMapping(value = "/register",method = RequestMethod.POST)
+    public String processRegistration(@Valid Spitter spitter,Errors errors){
+        if (errors.hasErrors()) {
+            return "registerForm";
+        }
+        spitterRepository.save(spitter);
+        return "redirect:/spitter/"+ spitter.getUsername(); //重定向到个人信息页面，避免表单重复提交
+    }
+```
+InternalResourceViewResolver 接收到视图格式中的“redirect:”前缀时，它将其解析为重定向的规则；视图格式中以“forward:”作为前缀时，请求将会前往（forward）指定的URL路径
+---
+SpitterControllerTest.java
+
+```
+@Test
+    public void  processRegistration() throws Exception {
+
+        Spitter unSavedSpitter = new Spitter("Joson","12345","zhang","jacoo","12345@168.com");
+        Spitter savedSpitter = new Spitter(10L,"Joson","12345","zhang","jacoo","12345@168.com");
+
+        SpitterRepository mockSpitterRepository = mock(SpitterRepository.class);
+        when(mockSpitterRepository.save(unSavedSpitter)).thenReturn(savedSpitter);
+
+        SpitterController spitterController = new SpitterController(mockSpitterRepository);
+
+        MockMvc mockMvc = MockMvcBuilders.standaloneSetup(spitterController).build();
+        mockMvc.perform(MockMvcRequestBuilders.post("/spittler/register")
+                .param("username","Joson")
+                .param("password","12345")
+                .param("firstName","zhang")
+                .param("lastName","jacoo")
+                .param("email","12345@168.com"))
+                .andExpect(MockMvcResultMatchers.redirectedUrl("/spittler/Joson"));
+
+    }
+```
+
+### 重定向到的个人信息的请求处理
+
+SpitterController.java
+```
+@RequestMapping(value = "/profile/{userName}")
+    public String showSpitterProfile(@PathVariable String userName, Model model){   //这里展现user的信息，需要模型数据传递给视图
+        model.addAttribute(spitterRepository.findSpitterByUserName(userName));
+        return "profile";
+    }
+```
+
+SpitterControllerTest.java
+
+```
+@Test
+    public void showSpitterProfile() throws Exception {
+        Spitter savedSpitter = new Spitter(10L,"Joson","12345","zhang","jacoo","12345@168.com");
+
+        SpitterRepository mockSpitterRepository = mock(SpitterRepository.class);
+        when(mockSpitterRepository.findSpitterByUserName(savedSpitter.getUsername())).thenReturn(savedSpitter);
+
+        SpitterController spitterController = new SpitterController(mockSpitterRepository);
+
+        MockMvc mockMvc = MockMvcBuilders.standaloneSetup(spitterController).build();
+        mockMvc.perform(MockMvcRequestBuilders.get("/spittler/profile/Joson"))
+                .andExpect(MockMvcResultMatchers.view().name("profile"))
+                .andExpect(MockMvcResultMatchers.model().attributeExists("spitter"));
+    }
+```
+
+###使用Java Validation API 表单检验
+pom.xml
+```xml
+<!-- https://mvnrepository.com/artifact/javax.validation/validation-api -->
+        <dependency>
+            <groupId>javax.validation</groupId>
+            <artifactId>validation-api</artifactId>
+            <version>2.0.1.Final</version>
+        </dependency>
+```
+提供的检验注解
+- @AssertFalse 所注解的元素必须是Boolean类型，并且值为false
+- @AssertTrue 所注解的元素必须是Boolean类型，并且值为true
+- @DecimalMax 所注解的元素必须是数字，并且它的值要小于或等于给定的BigDecimalString值
+- @DecimalMin 所注解的元素必须是数字，并且它的值要大于或等于给定的 BigDecimalString值
+- @Digits 所注解的元素必须是数字，并且它的值必须有指定的位数
+- @Future 所注解的元素的值必须是一个将来的日期
+- @Max 所注解的元素必须是数字，并且它的值要小于或等于给定的值
+- @Min 所注解的元素必须是数字，并且它的值要大于或等于给定的值
+- @NotNull 所注解元素的值必须不能为null
+- @Null 所注解元素的值必须为null
+- @Past 所注解的元素的值必须是一个已过去的日期
+- @Pattern 所注解的元素的值必须匹配给定的正则表达式
+- @Size
+  所注解的元素的值必须是String、集合或数组，并且它的长度要符
+  合给定的范围
+---
+Spitter.java
+```java
+public class Spitter {
+    /**
+     *
+     * Created by Joson on 2/28/2019.
+     */
+
+    private Long id;
+
+    @NotNull            //非空
+    @Size(min=5, max=16)//5-16个字符
+    private String username;
+
+    @NotNull
+    @Size(min=5, max=25)
+    private String password;
+
+    @NotNull
+    @Size(min=2, max=30)
+    private String firstName;
+
+    @NotNull
+    @Size(min=2, max=30)
+    private String lastName;
+
+    @NotNull
+    @Email
+    private String email;
+    
+}
+```
+SpillerController.java
+
+```
+@RequestMapping(value = "/register",method = RequestMethod.POST)
+    public String processRegistration(@Valid Spitter spitter,Errors errors){ //检验spitter 输入
+        if (errors.hasErrors()) {
+            return "registerForm";  //检验错误将返回 registerForm 表单
+        }
+        spitterRepository.save(spitter);
+        return "redirect:/spitter/"+ spitter.getUsername(); 
+    }
+```
+
+
+
 
 
 
