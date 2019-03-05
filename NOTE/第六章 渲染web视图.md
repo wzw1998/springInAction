@@ -192,3 +192,31 @@ Email: <sf:input path="email" type="email"/> <br/>
 如果存在校验错误的话，请求中会包含错误的详细信息，这些信息是
 与模型数据放到一起的。我们所需要做的就是到模型中将这些数据抽
 取出来，并展现给用户
+```jsp
+<sf:errors path="firstName"/>
+```
+path属性指定了将要显示模型对象的哪个属性的错误信息，当校验错误，将会在一个HTML <span>标签中显示错误信息，否则不渲染任何内容。
+
+如以上校验失败时渲染的内容是：
+```jsp
+<span id="firstName.errors">size must be between 2 and 30</span>
+```
+1. 用property文件定义错误信息
+
+在校验注解上设置message属性，使其引
+          用对用户更为友好的信息。（PS：没有使用{}将直接显示）
+          
+Spitter.java
+```
+    @NotNull
+    @Size(min=5, max=16, message="{username.size}")
+    private String username;
+```
+
+ValidationMessages.properties
+
+```
+firstName.size=First name must be between {min} and {max} characters long.
+```
+{min}和{max}会引用@Size注解上所设
+置的min和max属性。
