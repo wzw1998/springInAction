@@ -74,6 +74,12 @@
             <scope>runtime</scope>
         </dependency>
 
+        <!--只要保证在类路径下包含这个Java API的实现即可，比如Hibernate Validator。 -->
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>5.1.1.Final</version>
+        </dependency>
 
 
     </dependencies>

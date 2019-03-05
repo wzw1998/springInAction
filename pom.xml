@@ -13,6 +13,7 @@
         <module>Chapter_01_02</module>
         <module>Chapter_04</module>
         <module>Chapter_05</module>
+        <module>Chapter_06_jsp</module>
     </modules>
     <dependencies>
         <dependency>
