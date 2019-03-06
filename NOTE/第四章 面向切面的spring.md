@@ -1,5 +1,5 @@
-[toc]
-# 6. spring 的面向切面
+@[toc]
+# spring 的面向切面
 ## 面向切面编程AOP
 ### 相关概念
 1. 切面（Aspect）： 一个关注点的模块化，这个关注点可能会横切多个对象。事务管理是J2EE应用中一个关于横切关注点的很好的例子。由通知（什么时候，做什么）和切入点（在什么地方）组合而成。
@@ -21,21 +21,21 @@
 ### spring AOP
 1. spring AOP是构建在动态代理的基础上，并且该支持仅限于方法拦截。
 2. 如图示，代理类封装包含了目标bean，当外部调用了切入点，即目标对象的某个方法，代理类拦截该调用，执行切面逻辑（即通知），再将其转发给目标对象调用方法。（PS：仅支持方法连接点，不提供字段和构造器的接入点）
-![image](https://github.com/zhangzexing789/Picture/blob/master/Chapter0401.png?raw=true)
+![spring AOP 原理](https://img-blog.csdnimg.cn/20190306224221878.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl8zNDU2NTk3Nw==,size_16,color_FFFFFF,t_70)
 ## 通过切点选择连接点
 ### spring支持的切点指示器
-![image](https://github.com/zhangzexing789/Picture/blob/master/SpringInAction/Chapter04/Chapter0402.png)
+![切点指示器](https://img-blog.csdnimg.cn/20190306224338671.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl8zNDU2NTk3Nw==,size_16,color_FFFFFF,t_70)
 ### 编写切点
 - 当perform（）方法执行时触发通知<br>
-![image](https://github.com/zhangzexing789/Picture/blob/master/SpringInAction/Chapter04/Chapter0401.png)
-```
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20190306224658686.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl8zNDU2NTk3Nw==,size_16,color_FFFFFF,t_70)
+```java
 execution(* concert.Performance.perform())
 ```
 - 加上限制条件 within() 和 与或判断（&& 、 || ！以及xml使用的 and、or、not）<br>
-![image](https://github.com/zhangzexing789/Picture/blob/master/SpringInAction/Chapter04/Chapter0404.png)
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20190306224716669.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl8zNDU2NTk3Nw==,size_16,color_FFFFFF,t_70)
 ### 切点中选择bean
 - 使用bean()方法，通过bean ID 或者bean 名称来匹配bean
-```
+```java
 execution(* concert.Performance.perform())
     and bean('woodstock')
 匹配ID为woodstock的bean
@@ -43,13 +43,13 @@ execution(* concert.Performance.perform())
 ## 使用注解
 ### 目标对象
 接口 Performance.java
-```
+```java
 public interface Performance {
     public void perform();
 }
 ```
 目标类 Concert.java
-```
+```java
 @Component
 public class Concert implements Performance {
 
@@ -64,7 +64,7 @@ public class Concert implements Performance {
 ### 定义切面
 
 Audience.java
-```
+```java
 @Component
 @Aspect
 public class Audience {
@@ -113,7 +113,7 @@ public class Audience {
 
 可以使用@Pointcut 进行重构，抽出重复的切点表达式
 
-```
+```java
     @Pointcut("execution(* com.zexing.aspectj.Performance.perform(..))")
     public void performance(){
     
@@ -128,7 +128,7 @@ public class Audience {
 - 注解方式
 
 启动后这里spring容器才会将audience bean 创建为切面
-```
+```java
 @Configuration
 @EnableAspectJAutoProxy     //启用自动代理
 @ComponentScan
@@ -137,7 +137,7 @@ public class ConcertConfig {
 
 ```
 - xml方式
-```
+```xml
     <context:component-scan base-package="com.zexing.aspectj" />
 
     <aop:aspectj-autoproxy />
@@ -147,7 +147,7 @@ public class ConcertConfig {
 AspecJ自动代理都会使用@Aspect注解的bean创建一个代理,而这个代理会围绕着所有该切面的切点所匹配的bean。
 ### 测试
 测试类 ConcertConfigTest.java
-```
+```java
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = ConcertConfig.class)
 //@ContextConfiguration(locations = "classpath*:app.xml")
@@ -165,7 +165,7 @@ public class ConcertConfigTest {
 }
 ```
 结果
-```
+```jvaa
 silencing cell phones
 Taking seats
 Performing...
@@ -173,7 +173,7 @@ CLAP CLAP CLAP！
 ```
 ### 环绕通知
 Audience.java
-```
+```java
 @Aspect
 public class Audience {
 
@@ -198,7 +198,7 @@ public class Audience {
 这里的 @Around注解就声明了watchPerformance()方法成为了一个环绕通知切点。他的运行结果与上例使用@Before,@After等等的效果相同。可以发现watchPerformance()方法中给出了一个PreceedingJoinPoint类型的参数，这个是必须的，因为你需要告诉该切点中的任务相对与你的工作所处的位置。使用ProceedingJoinPoint’s proceed()方法将你的任务放在你想要的位置
 
 **测试结果**
-```
+```java
 手机静音
 得到座位
 Performing...
@@ -211,7 +211,7 @@ Performing...
 在CDPlayer播放中，记录磁道的播放次数与播放本身是不同的关注点，因此不应该属于playTrack()方法，故统计次数是切面的任务，切面获取磁道名称并记录其出现的次数。
 
 目标类 CDPlayer.java
-```
+```java
 @Component
 public class CDPlayer {
     /**
@@ -232,7 +232,7 @@ public class CDPlayer {
 ```
 
 CompactDisc.java
-```
+```java
 @Component
 public class CompactDisc {
     /**
@@ -255,7 +255,7 @@ public class CompactDisc {
 }
 ```
 切面类 TrackCounter.java
-```
+```java
 @Aspect
 @Component
 public class TrackCounter {
@@ -295,7 +295,7 @@ public class TrackCounter {
 
 配置类 CompactDiscConfig.java 
 
-```
+```java
 @Configuration
 @EnableAspectJAutoProxy     //启用自动代理
 @ComponentScan
@@ -331,7 +331,7 @@ public class CompactDiscConfig {
 }
 ```
 测试类 
-```
+```java
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = CompactDiscConfig.class)
 public class CompactDiscConfigTest {
@@ -366,7 +366,7 @@ public class CompactDiscConfigTest {
 上面我们都是在方法上新增功能方法，同样的，切面可以实现类级别上新增方法。
 如图示，切面引入新方法流程
 
-![image](https://github.com/zhangzexing789/Picture/blob/master/SpringInAction/Chapter04/%E5%88%87%E9%9D%A2%E5%BC%95%E5%85%A5%E6%96%B0%E6%96%B9%E6%B3%95%E6%B5%81%E7%A8%8B.png)
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20190306224843558.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl8zNDU2NTk3Nw==,size_16,color_FFFFFF,t_70)
 
 当引入接口的方法被调用时，代理会把此调用委 托给实现了新接口的某个其他对象。实际上，一个bean的实现被拆分到了多个类中。
 
@@ -375,13 +375,13 @@ public class CompactDiscConfigTest {
 　　　　在一场音乐会中，添加潮剧表演的环节，但在原来的音乐会表演类（Concert.java）中没有这个方法，所以需要为这个表演类再新加一个方法。
 
 1. 创建表演者接口
-```
+```java
 public interface Performer {
     public void performAdded();
 }
 ```
 2. 指派一个表演者去表演潮剧
-```
+```java
 @Component
 public class OnePerformer implements Performer {
 
@@ -395,7 +395,7 @@ public class OnePerformer implements Performer {
 }
 ```
 3. 通过主持人（切面类）的介绍
-```
+```java
 @Component
 @Aspect
 public class PerformIntroducer {
@@ -417,7 +417,7 @@ public class PerformIntroducer {
 - @DeclareParents注解所标注的静态属性指明了要引入的接 口。在这里，我们所引入的是Performer接口。
 
 4. 开始音乐会
-```
+```java
     @Test
     public void addPerform(){
         assertNotNull(concert);
@@ -428,7 +428,7 @@ public class PerformIntroducer {
     }
 ```
 5. 音乐会
-```
+```java
 手机静音
 得到座位
 silencing cell phones
@@ -456,7 +456,7 @@ CLAP CLAP CLAP！
 1. aop:poiontcut :定义一个切点
 
 -  声明前后置通知
-```
+```xml
 <!--声明切面 -->
     <aop:config>
         <aop:aspect ref="audience">       <!--引用audience Bean-->
@@ -473,7 +473,7 @@ CLAP CLAP CLAP！
     </aop:config>
 ```
 - 声明切点
-```
+```xml
 <!--声明切点 -->
     <aop:config>
         <aop:aspect ref="audience">
@@ -491,7 +491,7 @@ CLAP CLAP CLAP！
     </aop:config>
 ```
 - 声明环绕通知
-```
+```xml
 <!-- 声明环绕通知-->
     <aop:config>
         <aop:aspect ref="audience">       <!--引用audience Bean-->
@@ -504,7 +504,7 @@ CLAP CLAP CLAP！
 ```
 
 - 为通知传递参数
-```
+```xml
 <!-- 为通知传递参数-->
     <bean id="player" class="com.zexing.aspectj.trackPlayCount.CDPlayer" />
     <!-- 构造器注入属性-->
@@ -531,7 +531,7 @@ CLAP CLAP CLAP！
     </aop:config>
 ```
 - 为通知新增方法
-```
+```xml
 <!-- 为bean 新增方法-->
     <bean id="onePerformer" class="com.zexing.aspectj.concert2.OnePerformer" />
 

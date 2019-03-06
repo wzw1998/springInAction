@@ -1,6 +1,5 @@
-[toc]
-
-# 4.  spring 装配bean 的三种方式 #
+@[toc]
+# 1.  spring 装配bean 的三种方式 #
 ## (1) 自动化装配bean（隐式） #####
  - 适用对象：组件类 
  
@@ -26,21 +25,21 @@
  - 缺陷是无法实现第三方库组件的装配 <br>
  因为无法在第三方类库修改源码，即无法添加相应的装配bean注解
  
- **MediaPlayer.class**
- ```
+ **MediaPlayer.java**
+ ```java
  public interface MediaPlayer {
 
     void play();
 }
  ```
- **CompactDisc.class**
- ```
+ **CompactDisc.java**
+ ```java
 public interface CompactDisc {
     void play();
 }
  ```
-  **CDPlayer.class**
- ```
+  **CDPlayer.java**
+ ```java
 @Component
 public class CDPlayer implements MediaPlayer{
 
@@ -54,8 +53,8 @@ public class CDPlayer implements MediaPlayer{
     }
 }
  ```
-   **SgtPeppers.class**
- ```
+   **SgtPeppers.java**
+ ```java
 @Component  //声明为组件类
 public class SgtPeppers implements CompactDisc {
 
@@ -64,8 +63,8 @@ public class SgtPeppers implements CompactDisc {
     }
 }
  ```
- **配置类   CDPlayerConfig.class**
- ```
+ **配置类   CDPlayerConfig.java**
+ ```java
  //声明配置类
  @Configuration
  //启用组件扫描
@@ -75,7 +74,7 @@ public class CDPlayerConfig {
 }
 ```
 也可以通过 xml 文件开启组件扫描
-```
+```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -87,8 +86,8 @@ public class CDPlayerConfig {
 </beans>
 ```
 
- **测试类   CompactDiscTest.class**
- ```
+ **测试类   CompactDiscTest.java**
+ ```java
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = CDPlayerConfig.class) //声明使用的配置类加载配置
 public class CompactDiscTest {
@@ -114,7 +113,7 @@ JavaConfig 往往放在单独的包中，与应用逻辑代码分开
  - @Bean 表明返回的对象将注册为spring应用上下文中的bean,==默认id是方法名==。 可通过name属性重命名。
  （ PS:==@Autowired 声明的对象名与该ID保持一致==）
 
-```
+```java
 @Configuration
 public class CDPlayerConfig{
     @Bean(name = "sgtPeppers")
@@ -152,7 +151,7 @@ public class CDPlayerConfig{
 ###  a.  构造器注入对象引用
 - 构造器注入
 
-```
+```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -168,7 +167,7 @@ public class CDPlayerConfig{
 </beans>
 ```
 - C-命名空间注入
-```
+```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:c="http://www.springframework.org/schema/c"
@@ -193,8 +192,8 @@ public class CDPlayerConfig{
 ###  b.  构造器注入字面量（变量）
  以上都是类对象注入构造器，下面介绍字面量（变量）的注入
 
-BlankDisc类  
-```
+BlankDisc.java
+```java
 public class BlankDisc implements CompactDisc {
     private String title;
     private String artist;
@@ -208,20 +207,20 @@ public class BlankDisc implements CompactDisc {
 }
 ```
 - <constructor-arg>注入
-```
+```xml
 <bean id="blankDisc" class="codingdojo.parkingboy.spring.xml_bean.BlankDisc">
         <constructor-arg index="0" value="gentle music"/>
         <constructor-arg index="1" value="Jason"/>
     </bean>
 ```
 - c 命名空间注入
-```
+```xml
 <bean id="blankDisc" class="codingdojo.parkingboy.spring.xml_bean.BlankDisc"
         c:artist="gentle music" c:title="Jason"/>
 ```
 ### c. 构造器注入集合（只能通过 <constructor-arg> 注入）
-BlankDisc类  
-```
+BlankDisc.java
+```java
 public class BlankDisc implements CompactDisc {
     private List<String> songs;
     
@@ -236,7 +235,7 @@ public class BlankDisc implements CompactDisc {
     }
 }
 ```
-```
+```xml
 <bean id="blankDisc" class="codingdojo.parkingboy.spring.xml_bean.BlankDisc">
         <constructor-arg >
             <list>
@@ -249,11 +248,11 @@ public class BlankDisc implements CompactDisc {
 ```
 注入对象引用的集合
 
-```
+```java
 public CDPlayer(List<CompactDisc> ads){....}
 ```
 
-```
+```xml
 <bean id="blankDisc" class="codingdojo.parkingboy.spring.xml_bean.BlankDisc">
         <constructor-arg >
             <list>
@@ -268,7 +267,7 @@ public CDPlayer(List<CompactDisc> ads){....}
 前面我们都是使用构造器注入的方式，一般来说：强依赖（必不可少的）使用构造器注入，可选性依赖使用属性注入。
 这里的 CompactDisc 可以为强依赖，也可以是可选性的。下面是两种方式的注入：
 1.  通过构造器注入 CompactDisc
-```
+```java
 public class CDPlayer implements MediaPlayer {
 
     private CompactDisc compactDisc;
@@ -282,7 +281,7 @@ public class CDPlayer implements MediaPlayer {
 }
 ```
 2.  通过属性注入 CompactDisc
-```
+```java
 public class HDPlayer implements MediaPlayer {
 
     private CompactDisc compactDisc;
@@ -298,14 +297,14 @@ public class HDPlayer implements MediaPlayer {
 ```
 - <property> 属性注入
 
-```
+```xml
 <bean id="hdPlayer" class="codingdojo.parkingboy.spring.xml_bean.HDPlayer">
     <property name="compactDisc" ref="compactDisc"/>
 </bean>
 ```
 这里通过 ref 调用setCompactDisc（）方法将引用 bean 注入到属性compactDisc
 - p 命名空间 属性注入
-```
+```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:p="http://www.springframework.org/schema/p"
@@ -321,10 +320,10 @@ public class HDPlayer implements MediaPlayer {
     
 </beans>
 ```
-![image](2A8CF13361174DA7BF85D9DE30A9F592)
+![在这里插入图片描述](https://img-blog.csdnimg.cn/2019030622023526.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl8zNDU2NTk3Nw==,size_16,color_FFFFFF,t_70)
 ### e. 属性注入字面量（变量）
-BlankDisc 类
-```
+BlankDisc.java
+```java
 public class BlankDisc implements CompactDisc {
     private String title;
     private String artist;
@@ -343,7 +342,7 @@ public class BlankDisc implements CompactDisc {
 }
 ```
 - <property> 注入属性
-```
+```xml
 <bean id="blankDisc" class="codingdojo.parkingboy.spring.xml_bean.BlankDisc">
     <property name="title" value = "gentle music"/>
     <property name="artist" value = "Jason"/>
@@ -351,7 +350,7 @@ public class BlankDisc implements CompactDisc {
 ```
 - p 命名空间 注入属性
 
-```
+```xml
 <bean id="blankDisc" class="codingdojo.parkingboy.spring.xml_bean.BlankDisc">
     <properties>
         <p:title = "gentle music"/>
@@ -360,8 +359,8 @@ public class BlankDisc implements CompactDisc {
 </bean>
 ```
 ### f. 属性注入集合
-BlankDisc 类
-```
+BlankDisc.java
+```java
 public class BlankDisc implements CompactDisc {
     private String title;
     private String artist;
@@ -388,7 +387,7 @@ public class BlankDisc implements CompactDisc {
 }
 ```
 - <property> 注入集合
-```
+```xml
 <bean id="blankDisc" class="codingdojo.parkingboy.spring.xml_bean.BlankDisc">
         <property name = "tracks" >
             <list>
@@ -401,10 +400,24 @@ public class BlankDisc implements CompactDisc {
 ```
 - 这里我们使用 util-命名空间 实现p 命名空间 注入集合
 
-![image](BF0248D04D204F5D9B12AB7C636E1C21)
-
-
+```xml
+<util:list id="trackList">
+  <value>Sgt. Pepper's Lonely Hearts Club Band</value>
+  <value>With a Little Help from My Friends</value>
+  <value>Lucy in the Sky with Diamonds</value>
+  <value>Getting Better</value>
+  <value>Fixing a Hole</value>
+  <value>She's Leaving Home</value>
+  <value>Being for the Benefit of Mr. Kite!</value>
+  <value>Within You Without You</value>
+  <value>When I'm Sixty-Four</value>
+  <value>Lovely Rita</value>
+  <value>Good Morning Good Morning</value>
+  <value>Sgt. Pepper's Lonely Hearts Club Band (Reprise)</value>
+  <value>A Day in the Life</value>
+</util:list>
 ```
+```xml
 <bean id="blankDisc" class="codingdojo.parkingboy.spring.xml_bean.BlankDisc">
     <properties>
         <p:title = "gentle music"/>
@@ -414,18 +427,19 @@ public class BlankDisc implements CompactDisc {
 </bean>
 
 ```
+
 - 关于 util- 命名空间的其他属性说明
-![image](4CED759A778A4BDBA766C1341C395E94)
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20190306220859326.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl8zNDU2NTk3Nw==,size_16,color_FFFFFF,t_70)
 ##  JavaConfig 和 xml 配置 的混合使用
 ### 在JavaConfig中引用xml配置
 ### 在xml配置中引用 JavaConfig
-# 5. 高级装配 
+# 2. 高级装配 
 ## 配置profile bean 
 通常不同的开发环境我们都会使用不同的环境配置，比如配置文件，可以配置多个profile bean，并在不同需要中指定profile进行开发测试。
 
 ### 通过@Profile注解配置profile
 
-```
+```java
 @Configuration
 public class DataSourceConfig {
   
@@ -454,7 +468,7 @@ public class DataSourceConfig {
 这里的装配的bean 是基于激活的profile，即只有处于active 激活状态的profile 相应的bean才会被创建。（PS：没有指定profile的bean，即没有使用@Profile，始终都会被创建，也就没有有没有激活之说）
 ### 在XML中配置profile
 datasource-config.xml
-```
+```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jdbc="http://www.springframework.org/schema/jdbc"
@@ -499,7 +513,7 @@ http://www.springframework.org/schema/beans ">
 ```
 可以这样进行配置datasource-config.xml
 
-```
+```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -557,7 +571,7 @@ http://www.springframework.org/schema/beans ">
 
 web.xml
 
-```
+```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app version="3.0" xmlns="http://java.sun.com/xml/ns/javaee"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -605,7 +619,7 @@ web.xml
 ```
 ### 指定 profile 进行测试
 可以通过@ActiveProfiles来指定激活的profile
-```
+```java
   @RunWith(SpringJUnit4ClassRunner.class)
   @ContextConfiguration("classpath:datasource-config.xml")
   @ActiveProfiles("prod")
@@ -624,7 +638,7 @@ web.xml
 ### 概述
 在应用的类路径下包含特定的库，或者在另外特定的bean 声明之后，或者只有在特定环境配置之后才创建bean。
 ### @Conditional
-```
+```java
 public interface Condition {
 
 	/**
@@ -643,13 +657,13 @@ public interface Condition {
 
 ### 例子说明
 - 组件类
-```
+```java
 public class MagicBean {
 
 }
 ```
 - 配置类
-```
+```java
 @Configuration
 public class MagicConfig {
 
@@ -664,7 +678,7 @@ public class MagicConfig {
 @Conditional(MagicExistsCondition.class)指定Conditional接口的实现类
 
 - Conditional接口的实现类
-```
+```java
 public class MagicExistsCondition implements Condition {
 
   @Override
@@ -680,7 +694,7 @@ public class MagicExistsCondition implements Condition {
 实现matches方法，设置条件
 
 - 测试类
-```
+```java
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes=MagicConfig.class)
 public class MagicExistsTest {
@@ -708,12 +722,12 @@ public class MagicExistsTest {
 [Spring 条件注解（@Conditional）实例](https://blog.csdn.net/xiaolyuh123/article/details/64124828)
 ## 处理自动装配bean 的歧义性
 ### 使用@Primary 标识“喜欢”
-```
+```java
 public interface Animal{
     
 }
 ```
-```
+```java
 @Component
 public class Dog implements Animal{}
 
@@ -721,7 +735,7 @@ public class Dog implements Animal{}
 public class Cat implements Animal{}
 ```
 此时就不知道“爱好”哪只动物了，需要进行指定首选的“爱好”动物
-```
+```java
 public class myHobby{
     
     @Autowired
@@ -733,18 +747,18 @@ public class myHobby{
 }
 ```
 - 可以加上@Primary 指定首选
-```
+```java
 @Component
 @Primary
 public class Cat implements Animal{}
 ```
 - 如果使用xml创建bean
-```
+```xml
 <bean id = "cat" class = "com.zexing.Cat" primary = "true">
 ```
 ### 使用@Qualifier 标识限定词
 - 当有多个@Primary首选bean， 或者使用@Qualifier 代替其来指定 bean装配。
-```
+```java
 public class myHobby{
     
     @Autowired
@@ -758,13 +772,13 @@ public class myHobby{
 ```
 这里@Qualifier("cat")的cat是spring 给定的默认限定符，即与 bean 的ID相同。
 当然可以给该限定符重命名,在组件类上进行设置。
-```
+```java
 @Component
 @Qualifier("cute")
 public class Cat implements Animal{}
 ```
 这里的@Qualifier("cute")可以描述为该bean的特征，即“可爱的动物”。<br>==还有一个重点，就是这样做更多的是为了解除限定词与类名的紧耦合，避免类名的重构导致限定符的失效==。
-```
+```java
 public class myHobby{
     
     @Autowired
@@ -780,23 +794,23 @@ public class myHobby{
 - 使用自定义新的注解<br>
 如 @Cute 来代替 @Qualifier("cute")
 
-```
+```java
 @Target({ElementType.TYPE,ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 @Qualifier
 public @interface Cute {
 }
 ```
-@Red
-```
+interface @Red
+```java
 @Target({ElementType.TYPE,ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 @Qualifier
 public @interface Red {
 }
 ```
-@Black
-```
+interface @Black
+```java
 @Target({ElementType.TYPE,ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 @Qualifier
@@ -805,7 +819,7 @@ public @interface Black {
 ```
 所以cat 的组件类如下
 
-```
+```java
 @Component
 @Cute
 @Red
@@ -813,7 +827,7 @@ public class Cat implements Animal {
 }
 ```
 “我的爱好动物”是 cat
-```
+```java
 public class myHobby{
     
     @Autowired
@@ -826,13 +840,13 @@ public class myHobby{
     }
 }
 ```
-[Spring 注解实现Bean依赖注入之@Qualifier](https://blog.csdn.net/lovin_fang/article/details/78537547)
+参考文章 [Spring 注解实现Bean依赖注入之@Qualifier](https://blog.csdn.net/lovin_fang/article/details/78537547)
 
 ## bean的作用域
 ## 运行时属性注入
 ### 注入外部源的值 @PropertySource
 student.java
-```
+```java
 public class Student {
 
     private String name;
@@ -855,7 +869,7 @@ public class Student {
 
 1. 传统的属性注入，用的是hard code的方式
 
-```
+```java
     @Bean(name = "Mike")
     public Student student(){
         return new Student("Mike","male");
@@ -865,12 +879,12 @@ public class Student {
 
 app.properties
 
-```
+```properties
 stu.name=jack
 stu.sex=male
 ```
 StudentCofig.java
-```
+```java
 @Configuration
 @PropertySource("classpath:com/zexing/propertySource/app.properties")
 public class StudentCofig {
@@ -897,7 +911,7 @@ Environment 对象的方法
 3. 使用占位符<br>
 xml文件配置加载属性文件
 
-```
+```xml
 <context:property-placeholder
             location="classpath*:com/zexing/propertySource/app.properties" />
     <bean id="Jack1"
@@ -907,7 +921,7 @@ xml文件配置加载属性文件
 ```
 测试
 
-```
+```java
     @Test
     public void setStuWithXml(){
         ApplicationContext applicationContext = new ClassPathXmlApplicationContext("classpath*:/com/zexing/propertySource/app.xml");
@@ -915,7 +929,7 @@ xml文件配置加载属性文件
         assertEquals("jack",jack.getName());
     }
 ```
-### spring表达式语言SpEL
+### 【TODO】spring表达式语言SpEL
 
 
 

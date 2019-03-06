@@ -1,3 +1,4 @@
+@[toc]
 # 构建spring web应用程序
 ## 编辑基本的控制器
 ### 简单控制器
@@ -162,10 +163,7 @@ public class SpittleController {
 }
 ```
 
-模型中会存储一个Spittle列表，key为spittleList，然
-后这个列表会发送到名为spittles的视图中。按照我们配
-置InternalResourceViewResolver的方式，视图的JSP将会
-是“/WEB-INF/views/spittles.jsp”。
+模型中会存储一个Spittle列表，key为spittleList，然后这个列表会发送到名为spittles的视图中。按照我们配置InternalResourceViewResolver的方式，视图的JSP将会是“/WEB-INF/views/spittles.jsp”。
 
 测试类 SpittleControllerTest.java
 
@@ -309,6 +307,7 @@ public class SpittleControllerTest{
         }
 }
 ```
+---
 ## 处理表单
 ### 获取表单
 SpillerController.java
@@ -356,8 +355,8 @@ public class SpitterControllerTest {
 ### 处理提交的表单
 SpillerController.java
 
-```
-@RequestMapping(value = "/register",method = RequestMethod.POST)
+```java
+	@RequestMapping(value = "/register",method = RequestMethod.POST)
     public String processRegistration(@Valid Spitter spitter,Errors errors){
         if (errors.hasErrors()) {
             return "registerForm";
@@ -366,12 +365,13 @@ SpillerController.java
         return "redirect:/spitter/"+ spitter.getUsername(); //重定向到个人信息页面，避免表单重复提交
     }
 ```
+
 InternalResourceViewResolver 接收到视图格式中的“redirect:”前缀时，它将其解析为重定向的规则；视图格式中以“forward:”作为前缀时，请求将会前往（forward）指定的URL路径
----
+
 SpitterControllerTest.java
 
-```
-@Test
+```java
+	@Test
     public void  processRegistration() throws Exception {
 
         Spitter unSavedSpitter = new Spitter("Joson","12345","zhang","jacoo","12345@168.com");
@@ -397,8 +397,8 @@ SpitterControllerTest.java
 ### 重定向到的个人信息的请求处理
 
 SpitterController.java
-```
-@RequestMapping(value = "/profile/{userName}")
+```java
+	@RequestMapping(value = "/profile/{userName}")
     public String showSpitterProfile(@PathVariable String userName, Model model){   //这里展现user的信息，需要模型数据传递给视图
         model.addAttribute(spitterRepository.findSpitterByUserName(userName));
         return "profile";
@@ -407,8 +407,8 @@ SpitterController.java
 
 SpitterControllerTest.java
 
-```
-@Test
+```java
+	@Test
     public void showSpitterProfile() throws Exception {
         Spitter savedSpitter = new Spitter(10L,"Joson","12345","zhang","jacoo","12345@168.com");
 
@@ -424,7 +424,7 @@ SpitterControllerTest.java
     }
 ```
 
-###使用Java Validation API 表单检验
+### 使用Java Validation API 表单检验
 pom.xml
 ```xml
 <!-- https://mvnrepository.com/artifact/javax.validation/validation-api -->
@@ -432,6 +432,13 @@ pom.xml
             <groupId>javax.validation</groupId>
             <artifactId>validation-api</artifactId>
             <version>2.0.1.Final</version>
+        </dependency>
+        <!-- 需要加上下面的依赖，否则以下API 会不起作用
+        书中原话：只要保证在类路径下包含这个Java API的实现即可，比如Hibernate Validator。 -->
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>5.1.1.Final</version>
         </dependency>
 ```
 提供的检验注解
@@ -485,7 +492,7 @@ public class Spitter {
 ```
 SpillerController.java
 
-```
+```java
 @RequestMapping(value = "/register",method = RequestMethod.POST)
     public String processRegistration(@Valid Spitter spitter,Errors errors){ //检验spitter 输入
         if (errors.hasErrors()) {
@@ -495,7 +502,12 @@ SpillerController.java
         return "redirect:/spitter/"+ spitter.getUsername(); 
     }
 ```
+> Spitter参数添加了@Valid注解，这会告知 Spring，需要确保这个对象满足校验限制。
 
+> 在Spitter属性上添加校验限制并不能阻止表单提交。即便用户没有填写某个域或者某个域所给定的值超出了最大长度，processRegistration()方法依然会被调用。这样，我们就需要处理校验的错误，就像processRegistration()方法中所看到的那样。
+> 如果有校验出现错误的话，那么这些错误可以通过Errors对象进行 访问，现在这个对象已作为processRegistration()方法的参数。（PS: Errors参数要紧跟在带有@Valid注解的参数后面，@Valid注解所标注的就是要检验的参数。)
+> 如果有错误的话，Errors.hasErrors()将会返回到registerForm，也就是注册表单的视图。这能够让用户的浏览
+器重新回到注册表单页面，所以他们能够修正错误，然后重新尝试提交；如果没有错误的话，Spitter对象将会通过Repository进行保存，控制器会像之前那样重定向到基本信息页面。
 
 
 
