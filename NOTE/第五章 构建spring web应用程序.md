@@ -1,4 +1,3 @@
-@[toc]
 # 构建spring web应用程序
 ## 编辑基本的控制器
 ### 简单控制器
@@ -307,7 +306,6 @@ public class SpittleControllerTest{
         }
 }
 ```
----
 ## 处理表单
 ### 获取表单
 SpillerController.java
@@ -441,6 +439,8 @@ pom.xml
             <version>5.1.1.Final</version>
         </dependency>
 ```
+[SpringMVC @Valid无效 解决方案](https://blog.csdn.net/miaoch/article/details/81511348）)
+
 提供的检验注解
 - @AssertFalse 所注解的元素必须是Boolean类型，并且值为false
 - @AssertTrue 所注解的元素必须是Boolean类型，并且值为true

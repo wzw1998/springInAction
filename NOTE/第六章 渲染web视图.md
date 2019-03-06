@@ -220,3 +220,43 @@ firstName.size=First name must be between {min} and {max} characters long.
 ```
 {min}和{max}会引用@Size注解上所设
 置的min和max属性。
+### Spring 的通用标签库
+声明标签库
+```jsp
+<%@ taglib uri="http://www.springframework.org.tags" prefix='s'%>
+```
+---
+几种标签说明
+- \<s:escapeBody> 将标签体中的内容进行HTML和/或JavaScript转义
+- \<s:htmlEscape> 为当前页面设置默认的HTML转义值
+- \<s:message>
+  根据给定的编码获取信息，然后要么进行渲染（默认行
+  为），要么将其设置为页面作用域、请求作用域、会话作用
+  域或应用作用域的变量（通过使用var和scope属性实现）
+ - \<s:url>
+   创建相对于上下文的URL，支持URI模板变量以及
+   HTML/XML/JavaScript转义。可以渲染URL（默认行为），也
+   可以将其设置为页面作用域、请求作用域、会话作用域或应
+   用作用域的变量（通过使用var和scope属性实现）
+
+---
+1. 使用 \<s:message> 对展示信息进行国际化处理
+- 修改代码
+```jsp
+<h1><s:message code="spittr.welcome" /></h1>
+```
+- 配置信息源
+```java
+@Bean
+  public MessageSource messageSource () {   //配置信息源
+    ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
+    messageSource.setBasename("classpath:messages");
+    messageSource.setCacheSeconds(10);
+    return messageSource;
+  }
+```
+basename属性可以设置为在类路径下（以“classpath:”作
+为前缀）、文件系统中（以“file:”作为前缀）或Web应用的根路径
+下（没有前缀）查找属性
+- 创建property文件
+2. 
