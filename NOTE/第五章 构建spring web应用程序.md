@@ -426,14 +426,24 @@ SpitterControllerTest.java
 
 ###使用Java Validation API 表单检验
 pom.xml
-```xml
-<!-- https://mvnrepository.com/artifact/javax.validation/validation-api -->
+```
+        <!-- https://mvnrepository.com/artifact/javax.validation/validation-api -->
         <dependency>
             <groupId>javax.validation</groupId>
             <artifactId>validation-api</artifactId>
             <version>2.0.1.Final</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/com.h2database/h2 -->
+
+        <!--只要保证在类路径下包含这个Java API的实现即可，比如Hibernate Validator。 -->
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>5.1.1.Final</version>
+        </dependency>
 ```
+[SpringMVC @Valid无效 解决方案](https://blog.csdn.net/miaoch/article/details/81511348）)
+
 提供的检验注解
 - @AssertFalse 所注解的元素必须是Boolean类型，并且值为false
 - @AssertTrue 所注解的元素必须是Boolean类型，并且值为true
@@ -495,6 +505,7 @@ SpillerController.java
         return "redirect:/spitter/"+ spitter.getUsername(); 
     }
 ```
+
 
 
 

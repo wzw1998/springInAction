@@ -1,9 +1,11 @@
 package com.zexing.spittr.web;
 
 
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
@@ -35,6 +37,14 @@ public class WebConfig extends WebMvcConfigurerAdapter {
   public void addResourceHandlers(ResourceHandlerRegistry registry) {     //配置静态资源的处理
     // TODO Auto-generated method stub
     super.addResourceHandlers(registry);
+  }
+
+  @Bean
+  public MessageSource messageSource () {   //配置信息源
+    ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
+    messageSource.setBasename("messages");
+    messageSource.setCacheSeconds(10);
+    return messageSource;
   }
 
 }
