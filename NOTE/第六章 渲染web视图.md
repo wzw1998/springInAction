@@ -259,4 +259,73 @@ basename属性可以设置为在类路径下（以“classpath:”作
 为前缀）、文件系统中（以“file:”作为前缀）或Web应用的根路径
 下（没有前缀）查找属性
 - 创建property文件
-2. 
+
+messages.properties
+```properties
+spittr.welcome=Welcome to Spitter!
+```
+2.使用\<s:url> 创建URL
+- 简单使用
+```jsp
+ <a href=" <s:url value="/spitter/register" />">register</a>
+```
+\<s:url> 会接受一个相对于Servlet上下文的URL，并在渲染的时候，在URL 后面拼接上Servlet上下文路径，即当应用的Servlet上下文名为spittr，渲染后的
+标签内容是
+```jsp
+<a href="/spittr/spitter/register">register</a>
+```
+- 将 URL 赋值变量
+```jsp
+<s:url value="/spitter/register" var="registerUrl" />
+
+ 
+<a href=" ${registerUrl}">register</a>
+```
+- 添加作用域属性
+```jsp
+<s:url value="/spitter/register" var="registerUrl" scope="page"/>
+```
+- URL上添加参数
+```jsp
+<s:url value="/spittles" var="spittlesUrl">
+        <s:param name="max" value="60"/>
+        <s:param name="count" value="20" />
+</s:url>
+<a href="${spittlesUrl}">Spittles</a> 
+```
+跳转的URl将会拼接参数：
+```
+http://localhost:8080/spittles?max=60&count=20
+```
+- 渲染URL内容(需要去除 var 属性)
+
+设置属性 htmlEscape 为true
+```jsp
+<s:url value="/spittles"  htmlEscape="true">
+        <s:param name="max" value="60"/>
+        <s:param name="count" value="20" />
+</s:url>
+```
+将在页面直接显示URL的内容
+```
+/spittles?max=60&count=20
+```
+在javascript里面使用
+
+设置属性 javaScriptEscape 为true
+```jsp
+
+    <s:url value="/spittles" var="jsUrl" javaScriptEscape="true">
+      <s:param name="max" value="60"/>
+      <s:param name="count" value="20" />
+    </s:url>
+
+    <script>
+      var spittlesUrl = ${jsUrl};
+    </script>
+```
+## 使用Apache Tiles视图定义布局
+
+
+
+
