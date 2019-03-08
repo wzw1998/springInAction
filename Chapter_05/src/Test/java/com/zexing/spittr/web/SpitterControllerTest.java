@@ -58,7 +58,7 @@ public class SpitterControllerTest {
         SpitterController spitterController = new SpitterController(mockSpitterRepository);
 
         MockMvc mockMvc = MockMvcBuilders.standaloneSetup(spitterController).build();
-        mockMvc.perform(MockMvcRequestBuilders.get("/spitter/profile/Joson"))
+        mockMvc.perform(MockMvcRequestBuilders.get("/spitter/Joson"))
                 .andExpect(MockMvcResultMatchers.view().name("profile"))
                 .andExpect(MockMvcResultMatchers.model().attributeExists("spitter"));
     }

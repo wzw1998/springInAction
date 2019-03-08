@@ -41,7 +41,7 @@ public class SpitterController {
     }
 
 
-    @RequestMapping(value = "/profile/{userName}")
+    @RequestMapping(value = "/{userName}")
     public String showSpitterProfile(@PathVariable String userName, Model model){   //这里展现user的信息，需要模型数据传递给视图
         model.addAttribute(spitterRepository.findSpitterByUserName(userName));
         return "profile";
