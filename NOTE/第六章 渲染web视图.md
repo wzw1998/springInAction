@@ -326,19 +326,6 @@ http://localhost:8080/spittles?max=60&count=20
 ```
 ## 使用Apache Tiles视图定义布局
 
-可以为所有的页面定义布局模板
-
-### 配置 Tiles 视图解析器
-- TilesConfigurer bean
-
-负责定位和加载Tile定义并协调生成Tiles
-
-- TilesViewResolver bean
-
-将逻辑视图名称解析为Tile定义
-
-
-
 
 
 
