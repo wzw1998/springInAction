@@ -324,14 +324,14 @@ http://localhost:8080/spittles?max=60&count=20
       var spittlesUrl = ${jsUrl};
     </script>
 ```
-## 使用Apache Tiles视图定义布局
+## 【TODO】使用Apache Tiles视图定义布局
 
 为所有页面定义通用页面布局模板
 
 ### 导入相关jar包
 [参考链接](https://blog.csdn.net/ganmaotong/article/details/80377215)
 
-需导入Tiles相关的jar包（缺少包导致的Exception）：
+需导入Tiles相关的jar包（缺少包可能导致的Exception）：
 - tiles-api-3.0.8.jar
 - tiles-core-3.0.8.jar
 - tiles-jsp-3.0.8.jar
@@ -373,6 +373,35 @@ http://localhost:8080/spittles?max=60&count=20
   public ViewResolver viewResolver() {
     return new TilesViewResolver();
   }
+```
+- WebConfig.java
+```java
+@Configuration
+@EnableWebMvc //启用Spring MVC
+@ComponentScan("com.zexing.spittr.web") //启用组件扫描
+public class WebConfig extends WebMvcConfigurerAdapter {
+
+  @Bean
+  public ViewResolver viewResolver() {    //配置视图解析器
+    InternalResourceViewResolver resolver = new InternalResourceViewResolver();
+    resolver.setPrefix("/WEB-INF/views/");
+    resolver.setSuffix(".jsp");
+    resolver.setViewClass(JstlView.class);
+    return resolver;
+  }
+  
+  @Override
+  public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
+    configurer.enable();
+  }
+  
+  @Override
+  public void addResourceHandlers(ResourceHandlerRegistry registry) {     //配置静态资源的处理
+    // TODO Auto-generated method stub
+    super.addResourceHandlers(registry);
+  }
+
+}
 ```
 ---
 
