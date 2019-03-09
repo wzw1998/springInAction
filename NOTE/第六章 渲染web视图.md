@@ -259,4 +259,138 @@ basename属性可以设置为在类路径下（以“classpath:”作
 为前缀）、文件系统中（以“file:”作为前缀）或Web应用的根路径
 下（没有前缀）查找属性
 - 创建property文件
-2. 
+
+messages.properties
+```properties
+spittr.welcome=Welcome to Spitter!
+```
+2.使用\<s:url> 创建URL
+- 简单使用
+```jsp
+ <a href=" <s:url value="/spitter/register" />">register</a>
+```
+\<s:url> 会接受一个相对于Servlet上下文的URL，并在渲染的时候，在URL 后面拼接上Servlet上下文路径，即当应用的Servlet上下文名为spittr，渲染后的
+标签内容是
+```jsp
+<a href="/spittr/spitter/register">register</a>
+```
+- 将 URL 赋值变量
+```jsp
+<s:url value="/spitter/register" var="registerUrl" />
+
+ 
+<a href=" ${registerUrl}">register</a>
+```
+- 添加作用域属性
+```jsp
+<s:url value="/spitter/register" var="registerUrl" scope="page"/>
+```
+- URL上添加参数
+```jsp
+<s:url value="/spittles" var="spittlesUrl">
+        <s:param name="max" value="60"/>
+        <s:param name="count" value="20" />
+</s:url>
+<a href="${spittlesUrl}">Spittles</a> 
+```
+跳转的URl将会拼接参数：
+```
+http://localhost:8080/spittles?max=60&count=20
+```
+- 渲染URL内容(需要去除 var 属性)
+
+设置属性 htmlEscape 为true
+```jsp
+<s:url value="/spittles"  htmlEscape="true">
+        <s:param name="max" value="60"/>
+        <s:param name="count" value="20" />
+</s:url>
+```
+将在页面直接显示URL的内容
+```
+/spittles?max=60&count=20
+```
+在javascript里面使用
+
+设置属性 javaScriptEscape 为true
+```jsp
+
+    <s:url value="/spittles" var="jsUrl" javaScriptEscape="true">
+      <s:param name="max" value="60"/>
+      <s:param name="count" value="20" />
+    </s:url>
+
+    <script>
+      var spittlesUrl = ${jsUrl};
+    </script>
+```
+## 使用Apache Tiles视图定义布局
+
+为所有页面定义通用页面布局模板
+
+### 导入相关jar包
+[参考链接](https://blog.csdn.net/ganmaotong/article/details/80377215)
+
+需导入Tiles相关的jar包（缺少包导致的Exception）：
+- tiles-api-3.0.8.jar
+- tiles-core-3.0.8.jar
+- tiles-jsp-3.0.8.jar
+- tiles-servlet-3.0.8.jar
+- tiles-template-3.0.8.jar
+- slf4j-api-1.7.25  (java.lang.ClassNotFoundException: org.slf4j.LoggerFactory)
+- commons-digester-2.1 (java.lang.ClassNotFoundException: org.apache.commons.digester.Rule)
+- commons-beanutils-1.9.3 (ClassNotFoundException: org.apache.commons.beanutils.MethodUtils)
+- tiles-request-api-1.0.7.(java.lang.NoClassDefFoundError: org/apache/tiles/request/render/Renderer)
+- tiles-request-servlet-1.0.7.(ClassNotFoundException: org.apache.tiles.request.servlet.ServletApplicationContext)
+- tiles-request-jsp-1.0.7 (ClassNotFoundException: org.apache.tiles.request.jsp.autotag.JspAutotagRuntime)
+- tiles-autotag-core-runtime-1.2 (ClassNotFoundException: org.apache.tiles.autotag.core.runtime.AutotagRuntime)
+
+### 配置Tiles视图解析器
+- TilesConfigurer bean
+
+负责定位和加载Tile定义并协调生成Tiles
+
+```java
+ // Tiles
+  @Bean
+  public TilesConfigurer tilesConfigurer() {
+    TilesConfigurer tiles = new TilesConfigurer();
+    tiles.setDefinitions(new String[] {
+            "/WEB-INF/layout/tiles.xml",      //指定Tiles定义的位置
+            "/WEB-INF/views/**/tiles.xml"       //遍历“WEB-INF/”的所有子目录来查找Tile定义。
+    });
+    tiles.setCheckRefresh(true);    //启用刷新功能
+    return tiles;
+  }
+```
+
+- TilesViewResolver bean
+
+将逻辑视图名称解析为Tile定义。
+
+```java
+@Bean
+  public ViewResolver viewResolver() {
+    return new TilesViewResolver();
+  }
+```
+---
+
+- 通过xml配置
+```xml
+<bean id="tilesConfigurer"
+      class="org.springframework.web.servlet.view.tiles3.TilesConfigurer">
+    <property name="difinitions">
+      <list>
+        <value>WEB-INF/layout/tiles.xml</value>
+        <value>/WEB-INF/view/**.tiles.xml</value>
+    </property>
+</bean>
+<bean id="ViewResolver"
+    class="org.springframework.web.servlet.view.tiles3.TilesViewResolver" />
+```
+### 定义Tiles
+
+
+
+

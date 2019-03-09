@@ -42,7 +42,7 @@ public class WebConfig extends WebMvcConfigurerAdapter {
   @Bean
   public MessageSource messageSource () {   //配置信息源
     ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
-    messageSource.setBasename("messages");
+    messageSource.setBasename("classpath:messages");
     messageSource.setCacheSeconds(10);
     return messageSource;
   }
