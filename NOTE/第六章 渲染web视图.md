@@ -420,6 +420,125 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 ```
 ### 定义Tiles
 
+## Thymeleaf
+- [功能](https://www.cnblogs.com/jiangbei/p/8462294.html)
+>1.Thymeleaf 在有网络和无网络的环境下皆可运行，即它可以让美工在浏览器查看页面的静态效果，也可以让程序员在服务器查看带数据的动态页面效果。这是由于它支持 html 原型，然后在 html 标签里增加额外的属性来达到模板+数据的展示方式。浏览器解释 html 时会忽略未定义的标签属性，所以 thymeleaf 的模板可以静态地运行；当有数据返回到页面时，Thymeleaf 标签会动态地替换掉静态内容，使页面动态显示。
+>2.Thymeleaf 开箱即用的特性。它提供标准和spring标准两种方言，可以直接套用模板实现JSTL、 OGNL表达式效果，避免每天套模板、该jstl、改标签的困扰。同时开发人员也可以扩展和创建自定义的方言。
+>3.Thymeleaf 提供spring标准方言和一个与 SpringMVC 完美集成的可选模块，可以快速的实现表单绑定、属性编辑器、国际化等功能。
+### 配置Thymeleaf视图解析器
+配置启用的三个bean
+- ThymeleafViewResolver：将逻辑视图名称解析为Thymeleaf模板视图；
+- SpringTemplateEngine：处理模板并渲染结果；
+- TemplateResolver：加载Thymeleaf模板。
+```java
+   @Bean
+    public ViewResolver viewResolver(SpringTemplateEngine templateEngine) {
+      ThymeleafViewResolver viewResolver = new ThymeleafViewResolver();
+      viewResolver.setTemplateEngine(templateEngine);
+      return viewResolver;
+    }
+    @Bean
+    public SpringTemplateEngine templateEngine(TemplateResolver templateResolver) {
+      SpringTemplateEngine templateEngine = new SpringTemplateEngine();
+      templateEngine.setTemplateResolver(templateResolver);
+      return templateEngine;
+    }
+  
+    @Bean
+    public TemplateResolver templateResolver() {
+      TemplateResolver templateResolver = new ServletContextTemplateResolver();
+      templateResolver.setPrefix("/WEB-INF/views/");
+      templateResolver.setSuffix(".html");
+      templateResolver.setTemplateMode("HTML5");
+      return templateResolver;
+    }
+  
+    @Override
+    public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
+      configurer.enable();
+    }
 
+```
+使用 xml 
+```xml
+<bean id="viewResolver" class="org.thymeleaf.spring4.view.ThymeleafViewResolver"
+	p:templateEngine-ref="templateEngine" />
+<bean id="templateEngine" class="org.thymeleaf.spring4.SpringTemplateEngine"
+	P:templateResolver-ref="templateResolver" />
+<bean id="templateResolver" class="org.thymeleaf.templateresolver.ServletContextTemplateResolver"
+	p:prefix="WEB-INF/templates/"
+	p:suffix=".html"
+	p:templateMode="HTML5" />
+```
+ThymeleafViewResolver是Spirng MVC中ViewResolver的一个实现类。像其他视图解析器一样，会接受一个逻辑视图名称，并将其解析为视图。不过在该场景下 ，视图会是一个Thymeleaf模板。
 
+需要注意的是：ThymeleafViewResolver bean中注入了一个对SpringTemplateEnginebean 的引用。SpringTemplateEngine会在Spring中启用Thymeleaf引擎，用来解析模板并基于这些模板渲染结果。
 
+TemplateResolver会最终定位和查找模板。与之前配置的InternalResourceVIewResolver类似，他使用了prefix 和 suffix属性。它的templateMode属性被设置为HTML5，这表明我们预期要解析的模板会渲染成HTML5输出。
+
+### 定义Thymeleaf模板
+- 简单模板
+```html
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">            <!--声明Thymeleaf命名空间-->
+  <head>
+    <title>Spitter</title>
+    <link rel="stylesheet"
+          type="text/css"
+          th:href="@{/resources/style.css}"></link>    <!--到样式表的th:href链接-->
+  </head>
+  <body>
+      <h1>Welcome to Spitter</h1>
+      <a th:href="@{/spittles}">Spittles</a> |          <!--到页面的th:herf链接-->
+      <a th:href="@{/spitter/register}">Register</a>
+  </body>
+</html>
+```
+这里使用th:href属性的三个地方都是用到了“@{}”表达式，用来计算相对于URL的路径，相比于在JSP中 使用JSTL的 \<c:url>标签或Spring\<s:url>标签,Thymeleaf 模板能够按照原始的方式进行编辑甚至渲染，而不必经过任何类型的处理器,当然我们需要Thymeleaf来处理模板，并渲染得到最终期望的输出。
+
+- 实现表单绑定
+```html
+<label th:class="${#fields.hasErrors('firstName')}? 'error'">First Name</label>:
+		<input type="text" th:field="*{firstName}"
+					 th:class="${#fields.hasErrors('firstName')}? 'error'" /><br/>
+```
+这里th:class属性会渲染为一个class属性，它的值是根据给定的表达式计算得到的。在上面的这两个th:class属性中，它会直接检查firstName域有没有校验错误。如果有的话，class属性在渲染时的值为error。如果这个域没有错误的话，将不会渲染class属性。
+
+<input>标签使用了th:field属性，用来引用后端对象的firstName域。
+
+```html
+<form method="POST" th:object="${spitter}">
+        <div class="errors" th:if="${#fields.hasErrors('*')}">    <!-- 展现错误信息 -->
+          <ul>
+            <li th:each="err : ${#fields.errors('*')}" 
+                th:text="${err}">Input is incorrect</li>
+          </ul>
+        </div>
+        <label th:class="${#fields.hasErrors('firstName')}? 'error'">First Name</label>: 
+          <input type="text" th:field="*{firstName}"  
+                 th:class="${#fields.hasErrors('firstName')}? 'error'" /><br/>
+  
+        <label th:class="${#fields.hasErrors('lastName')}? 'error'">Last Name</label>: 
+          <input type="text" th:field="*{lastName}"
+                 th:class="${#fields.hasErrors('lastName')}? 'error'" /><br/>
+  
+        <label th:class="${#fields.hasErrors('email')}? 'error'">Email</label>: 
+          <input type="text" th:field="*{email}"
+                 th:class="${#fields.hasErrors('email')}? 'error'" /><br/>
+  
+        <label th:class="${#fields.hasErrors('username')}? 'error'">Username</label>: 
+          <input type="text" th:field="*{username}"
+                 th:class="${#fields.hasErrors('username')}? 'error'" /><br/>
+  
+        <label th:class="${#fields.hasErrors('password')}? 'error'">Password</label>: 
+          <input type="password" th:field="*{password}"  
+                 th:class="${#fields.hasErrors('password')}? 'error'" /><br/>
+        <input type="submit" value="Register" />
+
+</form>
+```
+在顶部，\<div>元素使用th:if属性来检查是否有校验错误。如果有的话，会渲染\<div>，否则的话，它将不会渲染。在\<div>中，会使用一个无顺序的列表来展现每项错误。\<li>标签上的th:each属性将会通知Thymeleaf为每项错误都渲染一个\<li>，在每次迭代中会将当前错误设置到一个名为err的变量中。
+
+"${}"表达式是变量表达式，一般来讲，他们是对象图导航语言(Object-Grapg Navigation language OGNL)表达式，但是在使用Spirng的时候，他们是SpEL表达式，在${Spitter}这里 例子中，它会解析为ket为spitter的model属性。
+
+而对于*{}表达式，他们是选择表达式。变量表达式是基于整个SpEl上下文计算的，而选择表达式是基于某一个选中对象计算的。在本例的表单中，选中对象就是标签中的th:object属性所设置的对象:模型中的Spitter对象。因此，“*{firsrName}”表达式就会计算为Spitter对象的firstName属性。

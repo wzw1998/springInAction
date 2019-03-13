@@ -1,0 +1,14 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">            <!--声明Thymeleaf命名空间-->
+<head>
+  <title>Spitter</title>
+  <link rel="stylesheet"
+        type="text/css"
+        th:href="@{/resources/style.css}"/>    <!--到样式表的th:href链接-->
+</head>
+<body>
+<h1>Welcome to Spitter</h1>
+<a th:href="@{/spittles}">Spittles</a> |          <!--到页面的th:herf链接-->
+<a th:href="@{/spitter/register}">Register</a>
+</body>
+</html>
