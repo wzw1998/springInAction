@@ -542,3 +542,5 @@ TemplateResolver会最终定位和查找模板。与之前配置的InternalResou
 "${}"表达式是变量表达式，一般来讲，他们是对象图导航语言(Object-Grapg Navigation language OGNL)表达式，但是在使用Spirng的时候，他们是SpEL表达式，在${Spitter}这里 例子中，它会解析为ket为spitter的model属性。
 
 而对于*{}表达式，他们是选择表达式。变量表达式是基于整个SpEl上下文计算的，而选择表达式是基于某一个选中对象计算的。在本例的表单中，选中对象就是标签中的th:object属性所设置的对象:模型中的Spitter对象。因此，“*{firsrName}”表达式就会计算为Spitter对象的firstName属性。
+
+具体的语法参考[官网](https://www.thymeleaf.org/doc/tutorials/3.0/thymeleafspring.html) 或者 [博客](https://www.cnblogs.com/topwill/p/7434955.html)
