@@ -16,6 +16,7 @@
         <module>Chapter_06_jsp</module>
         <module>Chapter_06_tiles</module>
         <module>Chapter_06_thymeleaf</module>
+        <module>Chapter_07</module>
     </modules>
     <dependencies>
         <dependency>
