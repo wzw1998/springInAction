@@ -24,12 +24,12 @@ public class WebConfig extends WebMvcConfigurerAdapter {
   }
   
   @Override
-  public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
+  public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {    //配置静态资源的处理
     configurer.enable();
   }
   
   @Override
-  public void addResourceHandlers(ResourceHandlerRegistry registry) {     //配置静态资源的处理
+  public void addResourceHandlers(ResourceHandlerRegistry registry) {
     // TODO Auto-generated method stub
     super.addResourceHandlers(registry);
   }

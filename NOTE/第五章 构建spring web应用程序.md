@@ -1,4 +1,108 @@
+[toc]
 # 构建spring web应用程序
+## Spring MVC
+![请求到响应的流程图](https://github.com/zhangzexing789/Picture/blob/master/SpringInAction/Chapter05/Chapter05_01_%E8%AF%B7%E6%B1%82%E5%88%B0%E5%93%8D%E5%BA%94%E7%9A%84%E6%B5%81%E7%A8%8B%E5%9B%BE.png)
+- 浏览器发送请求
+- spring 的 `DispatcherServlet`（前端控制器）接收请求
+- `DispatcherServlet` 根据控制器映射转发请求到控制器处理（实际上，设计良好的控制器本身只处理很少甚至不处理工作，而是将业务逻辑委托给一个或多个服务对象进行处理）
+- 控制器将生成模型和逻辑视图名返回给 `DispatcherServlet` （模型是请求信息处理后需要返回到用客户端页面显示的信息）
+- `DispatcherServlet` 发送视图名到视图解析器解析成对应的视图文件
+- `DispatcherServlet` 使用模型渲数据染视图，作为响应返回
+## Spring MVC的核心DispatcherServlet
+### 作用
+路由请求到其他组件进行处理
+### 配置 DispatcherServlet
+- 底层原理
+Servlet3.0 中，容器首先查找`javax.servlet.ServletContainerInitializer`接口的实现类，用它来配置Servlet容器，也就是spring提供的 `SpringServletContainerInitializer`类，
+在这个类中调用 `WebApplicationInitializer` 接口的实现类来完成配置任务。所以到头来只要实现`WebApplicationInitializer`接口即可，spring 就提供了实现类 `AbstractAnnotationConfigDispatcherServletInitializer`，
+我们最后仅继承并实现其方法就行.因此当部署到Servlet 3.0容器中的时候，容器会自动发现它，并用它来配置Servlet上下文
+
+
+- 只要是`AbstractAnnotationConfigDispatcherServletInitializer` 的继承类，即`SpitterWebInitializer`类会自动地配置`DispatcherServlet`和Spring应用上下文，Spring的应用上下文会位于应用程序的Servlet上下文之中。
+
+```java
+import com.zexing.spittr.web.WebConfig;
+import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
+
+
+public class SpitterWebInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
+  
+    @Override
+      protected String[] getServletMappings() { //将DispatcherServlet映射到"/"
+    
+        return new String[] { "/" };
+      }
+      
+      @Override
+      protected Class<?>[] getRootConfigClasses() {
+        return new Class<?>[] { RootConfig.class };
+      }
+    
+      @Override
+      protected Class<?>[] getServletConfigClasses() {  //指定配置类
+    
+        return new Class<?>[] { WebConfig.class };
+      }
+
+}
+```
+- `AbstractAnnotationConfigDispatcherServletInitializer`会同时创建`DispatcherServlet`和`ContextLoaderListener`,并加载配置文件或配置类中所声明的bean。
+- getServletMappings()<br>
+将一个或多个路径映射到`DispatcherServlet`上。在本例中，它映射的是“/”，这表示它会是应用的默认Servlet。它会处理进入应用的所有请求。
+- getServletConfigClasses()<br>
+返回带有`@Configuration`注解的类（`WebConfig`），使得前端控制器`DispatcherServlet`加载应用上下文时，使用定义在`WebConfig`配置类（使用Java配置）中的bean,即加载包含Web组件的bean，如控制器、视图解析器以及处理器映射
+- getRootConfigClasses()<br>
+返回的带有`@Configuration`注解的类(`RootConfig`),使得Servlet监听器`ContextLoaderListener` 加载应用中的其他bean（通常是驱动应用后端的中间层和数据层组件）
+- 还可以使用 web.xml 的配置方式
+- 这种方式只能部署到支持Servlet 3.0的服务器中才能正常工作，如Tomcat 7或更高版本
+### 启用Spring MVC
+- 使用\<mvc:annotation-driven>启用注解驱动
+- 使用注解`@EnableWebMvc`
+```java
+@Configuration
+@EnableWebMvc //启用Spring MVC
+@ComponentScan("com.zexing.spittr.web") //启用组件扫描
+public class WebConfig extends WebMvcConfigurerAdapter {
+
+  @Bean
+  public ViewResolver viewResolver() {    //配置视图解析器
+    InternalResourceViewResolver resolver = new InternalResourceViewResolver();
+    resolver.setPrefix("/WEB-INF/views/");
+    resolver.setSuffix(".jsp");
+    return resolver;
+  }
+  
+  @Override
+  public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) { 
+    configurer.enable();
+  }
+  
+  @Override
+  public void addResourceHandlers(ResourceHandlerRegistry registry) {   
+    super.addResourceHandlers(registry);
+  }
+
+}
+```
+configureDefaultServletHandling()<br>
+要求DispatcherServlet将对静态资源的请求转发到Servlet容器中默认的Servlet上，而不是使用DispatcherServlet本身来处理此类请求。
+
+- RootConfig.java
+```java
+@Configuration
+@Import(DataConfig.class)
+@ComponentScan(basePackages={"com.zexing.spittr"},
+    excludeFilters={
+        @Filter(type=FilterType.CUSTOM, value= RootConfig.WebPackage.class)
+    })
+public class RootConfig {
+  public static class WebPackage extends RegexPatternTypeFilter {
+    public WebPackage() {
+      super(Pattern.compile("spittr\\.web"));
+    }    
+  }
+}
+```
 ## 编辑基本的控制器
 ### 简单控制器
 HomeController.java
