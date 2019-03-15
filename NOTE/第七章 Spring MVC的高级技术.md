@@ -45,3 +45,64 @@ protected Filter[] getServletFilters() {
 }
 ```
 ## 使用 web.xml 配置 DispatcherServlet
+
+web.xml
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://java.sun.com/xml/ns/javaee"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+         id="taotao" version="2.5">
+  <display-name>appServlet</display-name>
+  <welcome-file-list>
+    <welcome-file>index.html</welcome-file>
+  </welcome-file-list>
+
+  <!--
+  根据之前的配置，我们需要手动的创建注册以下bea，并进行配置
+  1. 注册 DispatcherServlet
+  2. 注册ContextLoaderListener
+  3. 配置根上下文xml文件的位置
+  4. 映射路径到 DispatcherServlet
+  -->
+
+  <!-- 注册 springmvc 前端控制器 -->
+  <servlet>
+    <servlet-name>appServlet</servlet-name>
+    <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+
+  <!--配置监听器-->
+  <listener>
+    <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+  </listener>
+  <!-- 加载spring容器 -->
+  <context-param>
+    <param-name>contextConfigLocation</param-name>
+    <!--设置根上下文配置文件的位置 将由ContextLoaderListener加载-->
+    <param-value>classpath:spring/applicationContext-*.xml</param-value>
+  </context-param>
+
+  <!--映射路径-->
+  <servlet-mapping>
+    <servlet-name>appServlet</servlet-name>
+    <url-pattern>/</url-pattern>
+  </servlet-mapping>
+</web-app>
+```
+`DispatcherServlet`加载应用上下文，默认根据Servlet的名字进行加载，如上面的appServlet，`DispatcherServlet`会从“/WEB-INF/appServlet-context.xml”文件中加载其应用上下文.
+否则通过web.xml 进行指定,使用标签`<init-param>`
+```xml
+<!-- 注册 springmvc 前端控制器 -->
+  <servlet>
+    <servlet-name>appServlet</servlet-name>
+    <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+    <init-param>
+      <param-name>contextConfigLocation</param-name>
+      <param-value>/WEB-INF/spring/appServlet/servlet-context.xml</param-value>
+    </init-param>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+```
+
