@@ -5,7 +5,8 @@
 添加更多的重载方法来实现。
 
 ```
-  @Override  protected void customizeRegistration(ServletRegistration.Dynamic registration) {
+  @Override  
+  protected void customizeRegistration(ServletRegistration.Dynamic registration) {
           registration.setMultipartConfig(          //启用对multipart请求的支持
           new MultipartConfigElement("/tmp/spittr/uploads")
           );
